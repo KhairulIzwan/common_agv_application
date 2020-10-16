@@ -126,7 +126,7 @@ class CameraPreview:
 	# Pedestrian Detection callback function
 	def cbPedestrian(self):
 		# detect people in the image
-		(rects, weights) = hog.detectMultiScale(
+		(rects, weights) = self.hog.detectMultiScale(
 							self.cv_image, 
 							winStride=(4, 4),
 							padding=(8, 8), 
