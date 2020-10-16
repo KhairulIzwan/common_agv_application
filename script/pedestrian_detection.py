@@ -133,13 +133,23 @@ class CameraPreview:
 							scale=1.05
 							)
 
-		# draw the original bounding boxes
-		for (x, y, w, h) in rects:
+		# apply non-maxima suppression to the bounding boxes using a
+		# fairly large overlap threshold to try to maintain overlapping
+		# boxes that are still people
+		rects = np.array([[x, y, x + w, y + h] for (x, y, w, h) in rects])
+		pick = non_max_suppression(
+					rects, 
+					probs=None, 
+					overlapThresh=0.65
+					)
+
+		# draw the final bounding boxes
+		for (xA, yA, xB, yB) in pick:
 			cv2.rectangle(
 				self.cv_image, 
-				(x, y), 
-				(x + w, y + h), 
-				(0, 0, 255), 
+				(xA, yA), 
+				(xB, yB), 
+				(0, 255, 0), 
 				2
 				)
 
