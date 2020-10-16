@@ -38,8 +38,8 @@ class FaceDetection:
 		self.image_received = False
 
 		# Import haarCascade files
-		self.p = os.path.sep.join([self.rospack.get_path('common_face_application')])
-		self.libraryDir = os.path.join(self.p, "library")
+		self.p = os.path.sep.join([self.rospack.get_path('common_agv_application')])
+		self.libraryDir = os.path.join(self.p, "model")
 
 		self.haar_filename = self.libraryDir + "/haarcascade_frontalface_default.xml"
 
