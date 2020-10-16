@@ -163,7 +163,7 @@ class FacialLandmarks:
 	def cbPreview(self):
 		if self.image_received:
 			self.cbInfo()
-			self.cbPedestrian()
+			self.cbFacialLandmarks()
 			self.cbShowImage()
 		else:
 			rospy.logerr("No images recieved")
