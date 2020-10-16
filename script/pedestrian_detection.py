@@ -15,6 +15,7 @@ import cv2
 import time
 import imutils
 from imutils.object_detection import non_max_suppression
+import numpy as np
 
 # import the necessary ROS packages
 from std_msgs.msg import String
