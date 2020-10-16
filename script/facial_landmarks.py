@@ -168,7 +168,7 @@ class FacialLandmarks:
 	# Preview image + info
 	def cbPreview(self):
 		if self.image_received:
-			self.cbInfo()
+#			self.cbInfo()
 			self.cbFacialLandmarks()
 			self.cbShowImage()
 		else:
@@ -185,9 +185,9 @@ if __name__ == '__main__':
 	rospy.init_node('facial_landmarks', anonymous=False)
 	facial = FacialLandmarks()
 	
-#	r = rospy.Rate(10)
+	r = rospy.Rate(10)
 
 	# Camera preview
 	while not rospy.is_shutdown():
 		facial.cbPreview()
-#		r.sleep()
+		r.sleep()
