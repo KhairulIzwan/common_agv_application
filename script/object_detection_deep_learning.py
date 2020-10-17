@@ -17,6 +17,7 @@ import time
 import imutils
 import dlib
 import os
+import numpy as np
 
 # import the necessary ROS packages
 from std_msgs.msg import String
