@@ -30,15 +30,18 @@ from cv_bridge import CvBridgeError
 import rospy
 import rospkg
 
-class ObjectDetection:
-	def __init__(self):
+from common_agv_application.centroidtracker import CentroidTracker
 
+class PersonDetection:
+	def __init__(self):
+		# initialize our centroid tracker, bridge, and rospack
+		self.ct = CentroidTracker()
 		self.bridge = CvBridge()
 		self.rospack = rospkg.RosPack()
 
 		self.image_received = False
 
-		rospy.logwarn("ObjectDetection Node [ONLINE]...")
+		rospy.logwarn("PersonDetection Node [ONLINE]...")
 
 		# rospy shutdown
 		rospy.on_shutdown(self.cbShutdown)
@@ -126,7 +129,7 @@ class ObjectDetection:
 		self.imgHeight = msg.height
 
 	# Object Detection callback
-	def cbObjectDetection(self):
+	def cbPersonDetection(self):
 		# load the input image and construct an input blob for the image
 		# by resizing to a fixed 300x300 pixels and then normalizing it
 		# (note: normalization is done via the authors of the MobileNet SSD
@@ -140,6 +143,7 @@ class ObjectDetection:
 #		rospy.logwarn("Computing Object Detections...")
 		self.net.setInput(self.blob)
 		self.detections = self.net.forward()
+		self.rects = []
 
 	# Object Detection Information
 	def cbInfo(self):
@@ -156,12 +160,21 @@ class ObjectDetection:
 				# then compute the (x, y)-coordinates of the bounding box for
 				# the object
 				self.idx = int(self.detections[0, 0, i, 1])
+
+				# if the class label is not a person, ignore it
+				if self.CLASSES[self.idx] != "person":
+					continue
+
+				# compute the (x, y)-coordinates of the bounding box
+				# for the object
 				self.box = self.detections[0, 0, i, 3:7] * np.array([self.w, self.h, self.w, self.h])
+				self.rects.append(self.box.astype("int"))
+
 				(startX, startY, endX, endY) = self.box.astype("int")
 
 				# display the prediction
 				self.label = "{}: {:.2f}%".format(self.CLASSES[self.idx], self.confidence * 100)
-#				rospy.loginfo("{}".format(self.label))
+#					rospy.loginfo("{}".format(self.label))
 				cv2.rectangle(
 						self.image, 
 						(startX, startY), 
@@ -180,15 +193,28 @@ class ObjectDetection:
 					self.COLORS[self.idx], 
 					2)
 
+		# update our centroid tracker using the computed set of bounding
+		# box rectangles
+		objects = self.ct.update(self.rects)
+
+		# loop over the tracked objects
+		for (objectID, centroid) in objects.items():
+			# draw both the ID of the object and the centroid of the
+			# object on the output frame
+			text = "ID {}".format(objectID)
+			cv2.putText(self.image, text, (centroid[0] - 10, centroid[1] - 10),
+				cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+			cv2.circle(self.image, (centroid[0], centroid[1]), 4, (0, 255, 0), -1)
+
 	# Show the output frame
 	def cbShowImage(self):
-		cv2.imshow("Object Detection", self.image)
+		cv2.imshow("Person Detection", self.image)
 		cv2.waitKey(1)
 
 	# Preview image + info
 	def cbPreview(self):
 		if self.image_received:
-			self.cbObjectDetection()
+			self.cbPersonDetection()
 			self.cbInfo()
 			self.cbShowImage()
 		else:
@@ -196,18 +222,18 @@ class ObjectDetection:
 
 	# rospy shutdown callback
 	def cbShutdown(self):
-		rospy.logerr("ObjectDetection Node [OFFLINE]...")
+		rospy.logerr("PersonDetection Node [OFFLINE]...")
 		cv2.destroyAllWindows()
 
 if __name__ == '__main__':
 
 	# Initialize
-	rospy.init_node('object_detection', anonymous=False)
-	obj = ObjectDetection()
+	rospy.init_node('person_detection', anonymous=False)
+	obj = PersonDetection()
 	
 #	r = rospy.Rate(10)
 
-	# ObjectDetection
+	# PersonDetection
 	while not rospy.is_shutdown():
 		obj.cbPreview()
 #		r.sleep()
