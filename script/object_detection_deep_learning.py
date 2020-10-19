@@ -76,11 +76,11 @@ class ObjectDetection:
 		self.modelDir = os.path.join(self.package, "model")
 
 		# Caffe 'deploy' prototxt file
-		self.prototxt = self.modelDir + "MobileNetSSD_deploy.prototxt.txt"
+		self.prototxt = self.modelDir + "/MobileNetSSD_deploy.prototxt.txt"
 		# Caffe pre-trained model
-		self.model = self.modelDir + "MobileNetSSD_deploy.caffemodel"
+		self.model = self.modelDir + "/MobileNetSSD_deploy.caffemodel"
 
-		self.confidenceParam = 0.2
+		self.confidenceParam = 0.5
 
 		# load our serialized model from disk
 		rospy.loginfo("Loading Model...")
@@ -132,12 +132,12 @@ class ObjectDetection:
 		# (note: normalization is done via the authors of the MobileNet SSD
 		# implementation)
 		self.image = self.cv_image.copy()
-		(h, w) = self.image.shape[:2]
+		(self.h, self.w) = self.image.shape[:2]
 		self.blob = cv2.dnn.blobFromImage(cv2.resize(self.image, (300, 300)), 0.007843, (300, 300), 127.5)
 
 		# pass the blob through the network and obtain the detections and
 		# predictions
-		rospy.logwarn("Computing Object Detections...")
+#		rospy.logwarn("Computing Object Detections...")
 		self.net.setInput(self.blob)
 		self.detections = self.net.forward()
 
@@ -156,12 +156,12 @@ class ObjectDetection:
 				# then compute the (x, y)-coordinates of the bounding box for
 				# the object
 				self.idx = int(self.detections[0, 0, i, 1])
-				self.box = self.detections[0, 0, i, 3:7] * np.array([w, h, w, h])
-				(startX, startY, endX, endY) = box.astype("int")
+				self.box = self.detections[0, 0, i, 3:7] * np.array([self.w, self.h, self.w, self.h])
+				(startX, startY, endX, endY) = self.box.astype("int")
 
 				# display the prediction
-				self.label = "{}: {:.2f}%".format(self.CLASSES[idx], self.confidence * 100)
-				rospy.loginfo("{}".format(self.label))
+				self.label = "{}: {:.2f}%".format(self.CLASSES[self.idx], self.confidence * 100)
+#				rospy.loginfo("{}".format(self.label))
 				cv2.rectangle(
 						self.image, 
 						(startX, startY), 
@@ -205,9 +205,9 @@ if __name__ == '__main__':
 	rospy.init_node('object_detection', anonymous=False)
 	obj = ObjectDetection()
 	
-	r = rospy.Rate(10)
+#	r = rospy.Rate(10)
 
 	# ObjectDetection
 	while not rospy.is_shutdown():
 		obj.cbPreview()
-		r.sleep()
+#		r.sleep()
