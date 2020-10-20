@@ -32,14 +32,22 @@ import rospkg
 
 from common_agv_application.centroidtracker import CentroidTracker
 
+from common_agv_application.msg import personID
+from common_agv_application.msg import centerID
+from common_agv_application.msg import depthID
+
 class PersonDetection:
 	def __init__(self):
 		# initialize our centroid tracker, bridge, and rospack
 		self.ct = CentroidTracker()
 		self.bridge = CvBridge()
 		self.rospack = rospkg.RosPack()
+		self.personID = personID()
+		self.centerID = centerID()
+		self.depthID = depthID()
 
-		self.image_received = False
+		self.image_rgb_received = False
+		self.image_depth_received = False
 
 		rospy.logwarn("PersonDetection Node [ONLINE]...")
 
@@ -93,40 +101,97 @@ class PersonDetection:
 						)
 
 		# Subscribe to Image msg
-		self.image_topic = "/camera/rgb/image_raw"
-		self.image_sub = rospy.Subscriber(
-						self.image_topic, 
-						Image, self.cbImage
+		self.image_rgb_topic = "/camera/rgb/image_raw"
+		self.image_rgb_sub = rospy.Subscriber(
+						self.image_rgb_topic, 
+						Image, self.cbImageRGB
 						)
 
 		# Subscribe to CameraInfo msg
-		self.cameraInfo_topic = "/camera/rgb/camera_info"
-		self.cameraInfo_sub = rospy.Subscriber(
-						self.cameraInfo_topic, 
+		self.cameraInfo_rgb_topic = "/camera/rgb/camera_info"
+		self.cameraInfo_rgb_sub = rospy.Subscriber(
+						self.cameraInfo_rgb_topic, 
 						CameraInfo, 
-						self.cbCameraInfo
+						self.cbCameraInfoRGB
 						)
+
+		# Subscribe to Image msg
+		self.image_depth_topic = "/camera/depth/image_raw"
+		self.image_depth_sub = rospy.Subscriber(
+						self.image_depth_topic, 
+						Image, self.cbImageDepth
+						)
+
+		# Subscribe to CameraInfo msg
+		self.cameraInfo_depth_topic = "/camera/rgb/camera_info"
+		self.cameraInfo_depth_sub = rospy.Subscriber(
+						self.cameraInfo_depth_topic, 
+						CameraInfo, 
+						self.cbCameraInfoDepth
+						)
+
+		# Publish to personID msg
+		self.personID_topic = "/person/ID"
+		self.personID_pub = rospy.Publisher(
+					self.personID_topic, 
+					personID, 
+					queue_size=10
+					)
+
+		# Publish to centerID msg
+		self.centerID_topic = "/person/center"
+		self.centerID_pub = rospy.Publisher(
+					self.centerID_topic, 
+					centerID, 
+					queue_size=10
+					)
+
+		# Publish to depthID msg
+		self.depthID_topic = "/person/depth"
+		self.depthID_pub = rospy.Publisher(
+					self.depthID_topic, 
+					depthID, 
+					queue_size=10
+					)
 
 		# Allow up to one second to connection
 		rospy.sleep(1)
 
 	# Convert image to OpenCV format
-	def cbImage(self, msg):
+	def cbImageRGB(self, msg):
 
 		try:
-			self.cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+			self.cv_image_rgb = self.bridge.imgmsg_to_cv2(msg, "bgr8")
 		except CvBridgeError as e:
 			print(e)
 
-		if self.cv_image is not None:
-			self.image_received = True
+		if self.cv_image_rgb is not None:
+			self.image_rgb_received = True
 		else:
-			self.image_received = False
+			self.image_rgb_received = False
 
 	# Get CameraInfo
-	def cbCameraInfo(self, msg):
-		self.imgWidth = msg.width
-		self.imgHeight = msg.height
+	def cbCameraInfoRGB(self, msg):
+		self.imgWidth_rgb = msg.width
+		self.imgHeight_rgb = msg.height
+
+	# Convert image to OpenCV format
+	def cbImageDepth(self, msg):
+
+		try:
+			self.cv_image_depth = self.bridge.imgmsg_to_cv2(msg, "32FC1")
+		except CvBridgeError as e:
+			print(e)
+
+		if self.cv_image_depth is not None:
+			self.image_depth_received = True
+		else:
+			self.image_depth_received = False
+
+	# Get CameraInfo
+	def cbCameraInfoDepth(self, msg):
+		self.imgWidth_depth = msg.width
+		self.imgHeight_depth = msg.height
 
 	# Object Detection callback
 	def cbPersonDetection(self):
@@ -134,9 +199,9 @@ class PersonDetection:
 		# by resizing to a fixed 300x300 pixels and then normalizing it
 		# (note: normalization is done via the authors of the MobileNet SSD
 		# implementation)
-		self.image = self.cv_image.copy()
+		self.image = self.cv_image_rgb.copy()
 		(self.h, self.w) = self.image.shape[:2]
-		self.blob = cv2.dnn.blobFromImage(cv2.resize(self.image, (300, 300)), 0.007843, (300, 300), 127.5)
+		self.blob = cv2.dnn.blobFromImage(cv2.resize(self.image, (100, 100)), 0.007843, (100, 100), 127.5)
 
 		# pass the blob through the network and obtain the detections and
 		# predictions
@@ -144,6 +209,13 @@ class PersonDetection:
 		self.net.setInput(self.blob)
 		self.detections = self.net.forward()
 		self.rects = []
+
+		self.personID_array = []
+
+		self.centerID_X_array = []
+		self.centerID_Y_array = []
+
+		self.depthID_array = []
 
 	# Object Detection Information
 	def cbInfo(self):
@@ -206,6 +278,25 @@ class PersonDetection:
 				cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 			cv2.circle(self.image, (centroid[0], centroid[1]), 4, (0, 255, 0), -1)
 
+			depth = self.cv_image_depth[centroid[0], centroid[1]]
+
+			self.personID_array.append(objectID)
+
+			self.centerID_X_array.append(centroid[0])
+			self.centerID_Y_array.append(centroid[1])
+
+			self.depthID_array.append(depth)
+
+		self.personID.N = self.personID_array
+		self.personID_pub.publish(self.personID)
+
+		self.centerID.centerX = self.centerID_X_array
+		self.centerID.centerY = self.centerID_Y_array
+		self.centerID_pub.publish(self.centerID)
+
+		self.depthID.depth = self.depthID_array
+		self.depthID_pub.publish(self.depthID)
+
 	# Show the output frame
 	def cbShowImage(self):
 		cv2.imshow("Person Detection", self.image)
@@ -213,7 +304,7 @@ class PersonDetection:
 
 	# Preview image + info
 	def cbPreview(self):
-		if self.image_received:
+		if self.image_rgb_received:
 			self.cbPersonDetection()
 			self.cbInfo()
 			self.cbShowImage()

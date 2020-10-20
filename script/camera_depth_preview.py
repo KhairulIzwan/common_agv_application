@@ -58,7 +58,8 @@ class CameraPreview:
 	def cbImage(self, msg):
 
 		try:
-			self.cv_image = self.bridge.imgmsg_to_cv2(msg, "16UC1")
+#			self.cv_image = self.bridge.imgmsg_to_cv2(msg, "16UC1")
+			self.cv_image = self.bridge.imgmsg_to_cv2(msg, "32FC1")
 
 		except CvBridgeError as e:
 			print(e)
