@@ -31,7 +31,7 @@ class CameraPreview:
 		self.bridge = CvBridge()
 		self.image_received = False
 
-		rospy.logwarn("CameraPreview Node [ONLINE]...")
+		rospy.logwarn("CameraPreview [Depth] Node [ONLINE]...")
 
 		# rospy shutdown
 		rospy.on_shutdown(self.cbShutdown)
@@ -125,7 +125,7 @@ class CameraPreview:
 						width=320
 						)
 
-		cv2.imshow("CameraPreview", self.cv_image_clone)
+		cv2.imshow("CameraPreview [Depth]", self.cv_image_clone)
 		cv2.waitKey(1)
 
 	# Preview image + info
@@ -138,18 +138,18 @@ class CameraPreview:
 
 	# rospy shutdown callback
 	def cbShutdown(self):
-		rospy.logerr("CameraPreview Node [OFFLINE]...")
+		rospy.logerr("CameraPreview [Depth] Node [OFFLINE]...")
 		cv2.destroyAllWindows()
 
 if __name__ == '__main__':
 
 	# Initialize
-	rospy.init_node('camera_preview', anonymous=False)
+	rospy.init_node('camera_depth_preview', anonymous=False)
 	camera = CameraPreview()
 	
-	r = rospy.Rate(10)
+#	r = rospy.Rate(10)
 
 	# Camera preview
 	while not rospy.is_shutdown():
 		camera.cbPreview()
-		r.sleep()
+#		r.sleep()
