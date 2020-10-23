@@ -12,6 +12,9 @@ else:
 MAX_LIN_VEL = 0.22
 MAX_ANG_VEL = 2.84
 
+LIN_VEL_STEP_SIZE = 0.01
+ANG_VEL_STEP_SIZE = 0.1
+
 msg = """
 Control Your AGV!
 ---------------------------

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ################################################################################
-## {Description}: Object Detection Deep Learning
+## {Description}: Person Detection Deep Learning
 ################################################################################
 ## Author: Khairul Izwan Bin Kamsani
 ## Version: {1}.{0}.{0}
@@ -21,6 +21,7 @@ import numpy as np
 
 # import the necessary ROS packages
 from std_msgs.msg import String
+from std_msgs.msg import Bool
 from sensor_msgs.msg import Image
 from sensor_msgs.msg import CameraInfo
 
@@ -34,22 +35,25 @@ from common_agv_application.centroidtracker import CentroidTracker
 
 from common_agv_application.msg import personID
 from common_agv_application.msg import centerID
-from common_agv_application.msg import depthID
+#from common_agv_application.msg import depthID
 
 class PersonDetection:
 	def __init__(self):
 		# initialize our centroid tracker, bridge, and rospack
 		self.ct = CentroidTracker()
+
 		self.bridge = CvBridge()
 		self.rospack = rospkg.RosPack()
+
+		self.boolID = Bool()
 		self.personID = personID()
 		self.centerID = centerID()
-		self.depthID = depthID()
+#		self.depthID = depthID()
 
 		self.image_rgb_received = False
-		self.image_depth_received = False
+#		self.image_depth_received = False
 
-		rospy.logwarn("PersonDetection Node [ONLINE]...")
+		rospy.logwarn("Person Detection Node [ONLINE]...")
 
 		# rospy shutdown
 		rospy.on_shutdown(self.cbShutdown)
@@ -115,20 +119,36 @@ class PersonDetection:
 						self.cbCameraInfoRGB
 						)
 
-		# Subscribe to Image msg
-		self.image_depth_topic = "/camera/depth/image_raw"
-		self.image_depth_sub = rospy.Subscriber(
-						self.image_depth_topic, 
-						Image, self.cbImageDepth
-						)
+#		# Subscribe to Image msg
+#		self.image_depth_topic = "/camera/depth/image_raw"
+#		self.image_depth_sub = rospy.Subscriber(
+#						self.image_depth_topic, 
+#						Image, self.cbImageDepth
+#						)
 
-		# Subscribe to CameraInfo msg
-		self.cameraInfo_depth_topic = "/camera/rgb/camera_info"
-		self.cameraInfo_depth_sub = rospy.Subscriber(
-						self.cameraInfo_depth_topic, 
-						CameraInfo, 
-						self.cbCameraInfoDepth
-						)
+#		# Subscribe to CameraInfo msg
+#		self.cameraInfo_depth_topic = "/camera/depth/camera_info"
+#		self.cameraInfo_depth_sub = rospy.Subscriber(
+#						self.cameraInfo_depth_topic, 
+#						CameraInfo, 
+#						self.cbCameraInfoDepth
+#						)
+
+		# Publish to Bool msg
+		self.boolID_topic = "/person/bool"
+		self.boolID_pub = rospy.Publisher(
+					self.boolID_topic, 
+					Bool, 
+					queue_size=10
+					)
+
+		# Publish to personID msg
+		self.personID_topic = "/person/ID"
+		self.personID_pub = rospy.Publisher(
+					self.personID_topic, 
+					personID, 
+					queue_size=10
+					)
 
 		# Publish to personID msg
 		self.personID_topic = "/person/ID"
@@ -146,13 +166,13 @@ class PersonDetection:
 					queue_size=10
 					)
 
-		# Publish to depthID msg
-		self.depthID_topic = "/person/depth"
-		self.depthID_pub = rospy.Publisher(
-					self.depthID_topic, 
-					depthID, 
-					queue_size=10
-					)
+#		# Publish to depthID msg
+#		self.depthID_topic = "/person/depth"
+#		self.depthID_pub = rospy.Publisher(
+#					self.depthID_topic, 
+#					depthID, 
+#					queue_size=10
+#					)
 
 		# Allow up to one second to connection
 		rospy.sleep(1)
@@ -162,6 +182,9 @@ class PersonDetection:
 
 		try:
 			self.cv_image_rgb = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+
+			# un-comment if the image is mirrored
+			self.cv_image_rgb = cv2.flip(self.cv_image_rgb, 1)
 		except CvBridgeError as e:
 			print(e)
 
@@ -180,6 +203,9 @@ class PersonDetection:
 
 		try:
 			self.cv_image_depth = self.bridge.imgmsg_to_cv2(msg, "32FC1")
+
+			# un-comment if the image is mirrored
+			self.cv_image_depth = cv2.flip(self.cv_image_depth, 1)
 		except CvBridgeError as e:
 			print(e)
 
@@ -215,7 +241,7 @@ class PersonDetection:
 		self.centerID_X_array = []
 		self.centerID_Y_array = []
 
-		self.depthID_array = []
+#		self.depthID_array = []
 
 	# Object Detection Information
 	def cbInfo(self):
@@ -228,6 +254,9 @@ class PersonDetection:
 			# filter out weak detections by ensuring the `confidence` is
 			# greater than the minimum confidence
 			if self.confidence > self.confidenceParam:
+				# 
+				self.boolID.data = True
+				
 				# extract the index of the class label from the `detections`,
 				# then compute the (x, y)-coordinates of the bounding box for
 				# the object
@@ -264,6 +293,11 @@ class PersonDetection:
 					0.5, 
 					self.COLORS[self.idx], 
 					2)
+			else:
+				# 
+				self.boolID.data = False
+
+			self.boolID_pub.publish(self.boolID)
 
 		# update our centroid tracker using the computed set of bounding
 		# box rectangles
@@ -278,14 +312,14 @@ class PersonDetection:
 				cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 			cv2.circle(self.image, (centroid[0], centroid[1]), 4, (0, 255, 0), -1)
 
-			depth = self.cv_image_depth[centroid[0], centroid[1]]
+#			depth = self.cv_image_depth[centroid[0], centroid[1]]
 
 			self.personID_array.append(objectID)
 
 			self.centerID_X_array.append(centroid[0])
 			self.centerID_Y_array.append(centroid[1])
 
-			self.depthID_array.append(depth)
+#			self.depthID_array.append(depth)
 
 		self.personID.N = self.personID_array
 		self.personID_pub.publish(self.personID)
@@ -294,12 +328,14 @@ class PersonDetection:
 		self.centerID.centerY = self.centerID_Y_array
 		self.centerID_pub.publish(self.centerID)
 
-		self.depthID.depth = self.depthID_array
-		self.depthID_pub.publish(self.depthID)
+#		self.depthID.depth = self.depthID_array
+#		self.depthID_pub.publish(self.depthID)
 
 	# Show the output frame
 	def cbShowImage(self):
-		cv2.imshow("Person Detection", self.image)
+		self.image_resized = imutils.resize(self.image, width=300)
+
+		cv2.imshow("Person Detection [RGB]", self.image_resized)
 		cv2.waitKey(1)
 
 	# Preview image + info
@@ -313,7 +349,7 @@ class PersonDetection:
 
 	# rospy shutdown callback
 	def cbShutdown(self):
-		rospy.logerr("PersonDetection Node [OFFLINE]...")
+		rospy.logerr("Person Detection Node [OFFLINE]...")
 		cv2.destroyAllWindows()
 
 if __name__ == '__main__':
@@ -322,9 +358,9 @@ if __name__ == '__main__':
 	rospy.init_node('person_detection', anonymous=False)
 	obj = PersonDetection()
 	
-#	r = rospy.Rate(10)
+	r = rospy.Rate(10)
 
 	# PersonDetection
 	while not rospy.is_shutdown():
 		obj.cbPreview()
-#		r.sleep()
+		r.sleep()

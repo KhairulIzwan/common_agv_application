@@ -10,6 +10,8 @@ A project named as **"Malaysian Automated Guided Vehicle""**
 ## Project structure
 ```
 ├── CMakeLists.txt
+├── etc
+│   └── MDDS30 User's Manual.pdf
 ├── ino
 │   └── smartDriveDuo30_node
 │       └── smartDriveDuo30_node.ino
@@ -18,13 +20,19 @@ A project named as **"Malaysian Automated Guided Vehicle""**
 │   ├── MobileNetSSD_deploy.caffemodel
 │   ├── MobileNetSSD_deploy.prototxt.txt
 │   └── shape_predictor_68_face_landmarks.dat
+├── msg
+│   ├── centerID.msg
+│   ├── depthID.msg
+│   └── personID.msg
 ├── package.xml
 ├── README.md
 ├── script
-│   ├── camera_preview.py
+│   ├── camera_depth_preview.py
+│   ├── camera_rgb_preview.py
 │   ├── face_detection_haar.py
 │   ├── facial_landmarks_dlib.py
 │   ├── object_detection_deep_learning.py
+│   ├── obstacle_avoidance.py
 │   ├── opencv_object_tracker.py
 │   ├── person_detection_deep_learning.py
 │   ├── person_detection_hog.py
@@ -76,32 +84,48 @@ A project named as **"Malaysian Automated Guided Vehicle""**
 ## person_detection_deep_learning.py
 [x] Detection of person(s) using deep learning (MobileNetSSD)
 
+```
+Node [/person_detection]
+Publications: 
+ * /person/ID [common_agv_application/personID]
+ * /person/center [common_agv_application/centerID]
+ * /person/depth [common_agv_application/depthID]
+ * /rosout [rosgraph_msgs/Log]
+
+Subscriptions: 
+ * /camera/depth/image_raw [sensor_msgs/Image]
+ * /camera/rgb/camera_info [sensor_msgs/CameraInfo]
+ * /camera/rgb/image_raw [sensor_msgs/Image]
+
+Services: 
+ * /person_detection/get_loggers
+ * /person_detection/set_logger_level
+
+
+contacting node http://192.168.1.69:39971/ ...
+Pid: 18412
+Connections:
+ * topic: /rosout
+    * to: /rosout
+    * direction: outbound
+    * transport: TCPROS
+ * topic: /camera/rgb/camera_info
+    * to: /camera/camera_nodelet_manager (http://192.168.1.69:46883/)
+    * direction: inbound
+    * transport: TCPROS
+ * topic: /camera/rgb/image_raw
+    * to: /camera/camera_nodelet_manager (http://192.168.1.69:46883/)
+    * direction: inbound
+    * transport: TCPROS
+ * topic: /camera/depth/image_raw
+    * to: /camera/camera_nodelet_manager (http://192.168.1.69:46883/)
+    * direction: inbound
+    * transport: TCPROS
+```
+
 ## person_detection_hog.py
 [x] Detection of person(s) using Histogram of Gradient (HOG)
 
 ## teleop_key.py
 [x] Keyboard-based "AGV" control
 
-
-# CameraInfo
-header: 
-  seq: 156
-  stamp: 
-    secs: 1603164894
-    nsecs:  14866344
-  frame_id: "camera_rgb_optical_frame"
-height: 480
-width: 640
-distortion_model: "plumb_bob"
-D: [0.0, 0.0, 0.0, 0.0, 0.0]
-K: [519.761474609375, 0.0, 327.35552978515625, 0.0, 519.761474609375, 236.2485809326172, 0.0, 0.0, 1.0]
-R: [0.9999855756759644, 0.002107520354911685, -0.004944569896906614, -0.002123440383002162, 0.9999925494194031, -0.003216687822714448, 0.004937754012644291, 0.0032271407544612885, 0.9999825954437256]
-P: [519.761474609375, 0.0, 327.35552978515625, -25.509384155273438, 0.0, 519.761474609375, 236.2485809326172, -0.0034834917169064283, 0.0, 0.0, 1.0, -0.19314756989479065]
-binning_x: 0
-binning_y: 0
-roi: 
-  x_offset: 0
-  y_offset: 0
-  height: 0
-  width: 0
-  do_rectify: False

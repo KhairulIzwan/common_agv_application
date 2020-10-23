@@ -55,6 +55,7 @@ find_package(catkin REQUIRED COMPONENTS
    personID.msg
    centerID.msg
    depthID.msg
+   objCenter.msg
  )
 
 ## Generate services in the 'srv' folder
@@ -109,7 +110,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES common_agv_application
-#  CATKIN_DEPENDS roscpp rospy std_msgs
+  CATKIN_DEPENDS roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
 
