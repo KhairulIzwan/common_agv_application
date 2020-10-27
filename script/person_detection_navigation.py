@@ -180,9 +180,9 @@ class PersonFollow:
 				tiltSpeed = mapped(abs(self.tiltOut), 0, 1500, 0, self.MAX_LIN_VEL)
 
 				if self.panOut < 0:
-					self.robotCmdVel.angular.z = panSpeed
-				elif self.panOut > 0:
 					self.robotCmdVel.angular.z = -panSpeed
+				elif self.panOut > 0:
+					self.robotCmdVel.angular.z = panSpeed
 				else:
 					self.robotCmdVel.angular.z = 0
 

@@ -51,6 +51,7 @@ class PersonDetection:
 #		self.depthID = depthID()
 
 		self.image_rgb_received = False
+#		self.trackingMode_received = False
 #		self.image_depth_received = False
 
 		rospy.logwarn("Person Detection Node [ONLINE]...")
@@ -134,6 +135,15 @@ class PersonDetection:
 #						self.cbCameraInfoDepth
 #						)
 
+#		# TODO:
+#		# Subscribe to Bool msg
+#		self.trackingMode_topic = "/person/tracking"
+#		self.trackingMode_sub = rospy.Subscriber(
+#					self.trackingMode_topic, 
+#					Bool, 
+#					self.cbTrackingMode
+#					)
+
 		# Publish to Bool msg
 		self.boolID_topic = "/person/bool"
 		self.boolID_pub = rospy.Publisher(
@@ -174,6 +184,14 @@ class PersonDetection:
 #					queue_size=10
 #					)
 
+		# Publish to Image msg
+		self.personImage_topic = "/person/image"
+		self.personImage_pub = rospy.Publisher(
+					self.personImage_topic, 
+					Image, 
+					queue_size=10
+					)
+
 		# Allow up to one second to connection
 		rospy.sleep(1)
 
@@ -184,7 +202,7 @@ class PersonDetection:
 			self.cv_image_rgb = self.bridge.imgmsg_to_cv2(msg, "bgr8")
 
 			# un-comment if the image is mirrored
-			self.cv_image_rgb = cv2.flip(self.cv_image_rgb, 1)
+#			self.cv_image_rgb = cv2.flip(self.cv_image_rgb, 1)
 		except CvBridgeError as e:
 			print(e)
 
@@ -205,7 +223,7 @@ class PersonDetection:
 			self.cv_image_depth = self.bridge.imgmsg_to_cv2(msg, "32FC1")
 
 			# un-comment if the image is mirrored
-			self.cv_image_depth = cv2.flip(self.cv_image_depth, 1)
+#			self.cv_image_depth = cv2.flip(self.cv_image_depth, 1)
 		except CvBridgeError as e:
 			print(e)
 
@@ -218,6 +236,18 @@ class PersonDetection:
 	def cbCameraInfoDepth(self, msg):
 		self.imgWidth_depth = msg.width
 		self.imgHeight_depth = msg.height
+
+	# 
+	def cbTrackingMode(self, msg):
+		try:
+			self.trackingMode = msg.data
+		except KeyboardInterrupt as e:
+			print(e)
+
+		if self.trackingMode is not None:
+			self.trackingMode_received = True
+		else:
+			self.trackingMode_received = False
 
 	# Object Detection callback
 	def cbPersonDetection(self):
@@ -337,6 +367,11 @@ class PersonDetection:
 
 		cv2.imshow("Person Detection [RGB]", self.image_resized)
 		cv2.waitKey(1)
+
+		try:
+			self.personImage_pub.publish(self.bridge.cv2_to_imgmsg(self.image_resized, "bgr8"))
+		except CvBridgeError as e:
+			print(e)
 
 	# Preview image + info
 	def cbPreview(self):
