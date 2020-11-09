@@ -22,6 +22,7 @@ import numpy as np
 # import the necessary ROS packages
 from std_msgs.msg import String
 from std_msgs.msg import Bool
+from std_msgs.msg import Int64
 from sensor_msgs.msg import Image
 from sensor_msgs.msg import CameraInfo
 
@@ -33,6 +34,7 @@ import rospkg
 
 from common_agv_application.centroidtracker import CentroidTracker
 
+from common_agv_application.msg import objCenter as objCoord
 from common_agv_application.msg import personID
 from common_agv_application.msg import centerID
 #from common_agv_application.msg import depthID
@@ -51,7 +53,7 @@ class PersonDetection:
 #		self.depthID = depthID()
 
 		self.image_rgb_received = False
-#		self.trackingMode_received = False
+		self.trackingMode_received = False
 #		self.image_depth_received = False
 
 		rospy.logwarn("Person Detection Node [ONLINE]...")
@@ -135,14 +137,30 @@ class PersonDetection:
 #						self.cbCameraInfoDepth
 #						)
 
-#		# TODO:
-#		# Subscribe to Bool msg
-#		self.trackingMode_topic = "/person/tracking"
-#		self.trackingMode_sub = rospy.Subscriber(
-#					self.trackingMode_topic, 
-#					Bool, 
-#					self.cbTrackingMode
-#					)
+		# TODO:
+		# Subscribe to Bool msg
+		self.trackingMode_topic = "/person/tracking"
+		self.trackingMode_sub = rospy.Subscriber(
+					self.trackingMode_topic, 
+					Bool, 
+					self.cbTrackingMode
+					)
+
+		# Subscribe to objCenter msg
+		self.objCoord_topic = "/person/objCoord"
+		self.objCoord_sub = rospy.Subscriber(
+					self.objCoord_topic, 
+					objCoord, 
+					self.cbObjCoord
+					)
+
+		# Subscribe to depthID msg
+		self.depthCoord_topic = "/person/depth"
+		self.depthCoord_sub = rospy.Subscriber(
+					self.depthCoord_topic, 
+					Int64, 
+					self.cbDepthCoord
+					)
 
 		# Publish to Bool msg
 		self.boolID_topic = "/person/bool"
@@ -249,6 +267,15 @@ class PersonDetection:
 		else:
 			self.trackingMode_received = False
 
+	# 
+	def cbObjCoord(self, msg):
+		self.objCoord_X = msg.centerX
+		self.objCoord_Y = msg.centerY
+
+	# 
+	def cbDepthCoord(self, msg):
+		self.objCoord_depth = msg.data
+
 	# Object Detection callback
 	def cbPersonDetection(self):
 		# load the input image and construct an input blob for the image
@@ -257,7 +284,7 @@ class PersonDetection:
 		# implementation)
 		self.image = self.cv_image_rgb.copy()
 		(self.h, self.w) = self.image.shape[:2]
-		self.blob = cv2.dnn.blobFromImage(cv2.resize(self.image, (100, 100)), 0.007843, (100, 100), 127.5)
+		self.blob = cv2.dnn.blobFromImage(cv2.resize(self.image, (300, 300)), 0.007843, (300, 300), 127.5)
 
 		# pass the blob through the network and obtain the detections and
 		# predictions
@@ -328,6 +355,34 @@ class PersonDetection:
 				self.boolID.data = False
 
 			self.boolID_pub.publish(self.boolID)
+			
+			if self.trackingMode_received:
+				cv2.putText(
+						self.image, 
+						"TRACKING MODE: %s" % self.trackingMode, 
+						(10, 40),
+						cv2.FONT_HERSHEY_SIMPLEX, 
+						1, 
+						(0, 0, 255), 
+						4)
+				cv2.putText(
+						self.image, 
+						"CENTER: (%d, %d)" % (self.objCoord_X, self.objCoord_Y), 
+						(10, 80),
+						cv2.FONT_HERSHEY_SIMPLEX, 
+						1, 
+						(0, 0, 255), 
+						4)
+				cv2.putText(
+						self.image, 
+						"DEPTH: %d" % self.objCoord_depth, 
+						(10, 120),
+						cv2.FONT_HERSHEY_SIMPLEX, 
+						1, 
+						(0, 0, 255), 
+						4)
+			else:
+				pass
 
 		# update our centroid tracker using the computed set of bounding
 		# box rectangles

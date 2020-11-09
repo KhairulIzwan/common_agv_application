@@ -147,8 +147,8 @@ class PersonTracking:
 	# Convert image to OpenCV format
 	def cbImageDepth(self, msg):
 		try:
-#			self.cv_image_depth = self.bridge.imgmsg_to_cv2(msg, "16UC1")
-			self.cv_image_depth = self.bridge.imgmsg_to_cv2(msg, "32FC1")
+			self.cv_image_depth = self.bridge.imgmsg_to_cv2(msg, "16UC1")
+#			self.cv_image_depth = self.bridge.imgmsg_to_cv2(msg, "32FC1")
 
 			# un-comment if the image is mirrored
 #			self.cv_image_depth = cv2.flip(self.cv_image_depth, 1)
@@ -191,24 +191,30 @@ class PersonTracking:
 			if self.boolID:
 				# TODO: Which ID to select?
 				if not self.personID:
-					self.trackingMode.data = False
-					pass
-				else:
-					if self.personID[0] == 0:
-						self.objectCoord.centerX = int(self.centerID_X[0])
-						self.objectCoord.centerY = int(self.centerID_Y[0])
+					self.objectCoord.centerX = self.imgWidth_depth // 2
+					self.objectCoord.centerY = self.imgHeight_depth // 2
 
-						# TODO:
-						self.depthCoord.data = self.cv_image_depth[self.centerID_X[0], self.centerID_Y[0]]
-						self.trackingMode.data = True
-					else:
-						self.trackingMode.data = False
-						pass
+	#				self.depthCoord.data = self.cv_image_depth[self.imgWidth_depth // 2, self.imgHeight_depth // 2] 
+					self.depthCoord.data = self.cv_image_depth[self.imgHeight_depth // 2, self.imgWidth_depth // 2] 
+					self.trackingMode.data = False
+				else:
+#					if self.personID[0] == 0:
+					self.objectCoord.centerX = int(self.centerID_X[0])
+					self.objectCoord.centerY = int(self.centerID_Y[0])
+
+					# TODO:
+#						self.depthCoord.data = self.cv_image_depth[self.centerID_X[0], self.centerID_Y[0]]
+					self.depthCoord.data = self.cv_image_depth[self.centerID_Y[0], self.centerID_X[0]]
+					self.trackingMode.data = True
+#					else:
+#						self.trackingMode.data = False
+#						pass
 			else:
 				self.objectCoord.centerX = self.imgWidth_depth // 2
 				self.objectCoord.centerY = self.imgHeight_depth // 2
 
-				self.depthCoord.data = self.cv_image_depth[self.imgWidth_depth // 2, self.imgHeight_depth // 2] 
+#				self.depthCoord.data = self.cv_image_depth[self.imgWidth_depth // 2, self.imgHeight_depth // 2] 
+				self.depthCoord.data = self.cv_image_depth[self.imgHeight_depth // 2, self.imgWidth_depth // 2] 
 				self.trackingMode.data = False
 
 			self.objCoord_pub.publish(self.objectCoord)
@@ -216,7 +222,8 @@ class PersonTracking:
 			self.trackingMode_pub.publish(self.trackingMode)
 
 		else:
-			rospy.logerr("Please run required node!")
+#			rospy.logerr("Please run required node!")
+			self.cbShowImage()
 
 	# rospy shutdown callback
 	def cbShutdown(self):

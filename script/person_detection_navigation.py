@@ -46,8 +46,8 @@ class PersonFollow:
 
 		self.trackingMode_received = False
 
-		self.MAX_LIN_VEL = 2.00
-		self.MAX_ANG_VEL = 0.4
+		self.MAX_LIN_VEL = 1.00
+		self.MAX_ANG_VEL = 0.2
 
 		# set PID values for pan
 		self.panP = 0.5
@@ -156,7 +156,7 @@ class PersonFollow:
 	def cbPIDerr(self):
 		self.panErr, self.panOut = self.cbPIDprocess(self.panPID, self.objCoord_X, self.imgWidth_depth // 2)
 #		self.tiltErr, self.tiltOut = self.cbPIDprocess(self.tiltPID, self.objCoord_Y, self.imgHeight_depth // 2)
-		self.tiltErr, self.tiltOut = self.cbPIDprocess(self.tiltPID, self.objCoord_depth, 1500)
+		self.tiltErr, self.tiltOut = self.cbPIDprocess(self.tiltPID, self.objCoord_depth, 1000)
 
 	def cbPIDprocess(self, pid, objCoord, centerCoord):
 		# calculate the error
@@ -177,7 +177,7 @@ class PersonFollow:
 
 				panSpeed = mapped(abs(self.panOut), 0, self.imgWidth_depth // 2, 0, self.MAX_ANG_VEL)
 #				tiltSpeed = mapped(abs(self.tiltOut), 0, self.imgHeight // 2, 0, self.MAX_LIN_VEL)
-				tiltSpeed = mapped(abs(self.tiltOut), 0, 1500, 0, self.MAX_LIN_VEL)
+				tiltSpeed = mapped(abs(self.tiltOut), 0, 1000, 0, self.MAX_LIN_VEL)
 
 				if self.panOut < 0:
 					self.robotCmdVel.angular.z = -panSpeed
@@ -187,9 +187,10 @@ class PersonFollow:
 					self.robotCmdVel.angular.z = 0
 
 				if self.tiltOut > 0:
-					self.robotCmdVel.linear.x = tiltSpeed
+#					self.robotCmdVel.linear.x = -tiltSpeed
+					self.robotCmdVel.linear.x = 0
 				elif self.tiltOut < 0:
-					self.robotCmdVel.linear.x = -tiltSpeed
+					self.robotCmdVel.linear.x = tiltSpeed
 				else:
 					self.robotCmdVel.linear.x = 0
 
@@ -222,6 +223,16 @@ class PersonFollow:
 	# rospy shutdown callback
 	def cbShutdown(self):
 		rospy.logerr("AprilTag Tracking Node [OFFLINE]...")
+
+		# trackingMode Halt!
+		self.robotCmdVel.linear.x = 0.0
+		self.robotCmdVel.linear.y = 0.0
+		self.robotCmdVel.linear.z = 0.0
+
+		self.robotCmdVel.angular.x = 0.0
+		self.robotCmdVel.angular.y = 0.0
+		self.robotCmdVel.angular.z = 0.0
+		self.robotCmdVel_pub.publish(self.robotCmdVel)
 
 if __name__ == '__main__':
 
