@@ -49,9 +49,10 @@ A project named as **"Automated Guided Vehicle"**
 1. PC/Laptop: Ubuntu Xenial Xerus (16.04 LTS) -- ROS Kinetic Kame
 2. Raspberry Pi 4 8GB: Ubuntu Bionic Beaver (18.04 LTS) -- ROS Melodic Morenia
 3. Astra Camera
-5. Arduino: MakerUNO
-6. Motor Driver: SmartDrive
-7. 24V Battery (Lead-ACID)
+4. Arduino: MakerUNO
+5. Motor Driver: SmartDrive
+6. 24V Battery (Lead-ACID)
+7. Robot Chassis
 
 <!--**ros_astra_camera packages required** : https://github.com/orbbec/ros_astra_camera.git-->
 <!--4. RPLidar-->
