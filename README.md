@@ -83,9 +83,7 @@ A project named as **"Automated Guided Vehicle"**
 	1. https://www.arduino.cc/en/software
 	
 ## System Architecture
-
-![System Architecture](/etc/Service Robot.png)
-Format: ![System Architecture](https://github.com/KhairulIzwan/common_agv_application/blob/main/etc/Service%20Robot.png)
+![System Architecture](https://github.com/KhairulIzwan/common_agv_application/blob/main/etc/Service%20Robot.png)
 
 ## Cloning Required Repositories
 
