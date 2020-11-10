@@ -77,6 +77,14 @@ A project named as **"Automated Guided Vehicle"**
 	
 ## System Architecture
 
+## How to use
+
+1. Clone **common_agv_application** package:
+```
+$ cd ~/catkin_ws/src
+$ git clone https://github.com/KhairulIzwan/common_agv_application.git
+$ cd ~/catkin_ws && rosdep install -y --from-paths src --ignore-src --rosdistro kinetic && catkin_make && rospack profile
+```
 
 ## Scripts
 ## smartDriveDuo30_node.ino
