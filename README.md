@@ -21,6 +21,7 @@ A project named as **"Automated Guided Vehicle"**
 ├── msg
 │   ├── centerID.msg
 │   ├── depthID.msg
+│   ├── objCenter.msg
 │   └── personID.msg
 ├── package.xml
 ├── README.md
@@ -34,6 +35,8 @@ A project named as **"Automated Guided Vehicle"**
 │   ├── opencv_object_tracker.py
 │   ├── person_detection_deep_learning.py
 │   ├── person_detection_hog.py
+│   ├── person_detection_navigation.py
+│   ├── person_detection_tracking.py
 │   └── teleop_key.py
 ├── setup.py
 └── src
@@ -41,6 +44,10 @@ A project named as **"Automated Guided Vehicle"**
         ├── centroidtracker.py
         ├── centroidtracker.pyc
         ├── __init__.py
+        ├── makesimpleprofile.py
+        ├── makesimpleprofile.pyc
+        ├── pid.py
+        ├── pid.pyc
         └── trackableobject.py
 ```
 
@@ -1125,9 +1132,9 @@ if __name__ == '__main__':
 		r.sleep()
 ```
 
-## person_detection_hog.py
-[x] Detection of person(s) using Histogram of Gradient (HOG)
+<!--## person_detection_hog.py-->
+<!--- [x] Detection of person(s) using Histogram of Gradient (HOG)-->
 
-## teleop_key.py
-[x] Keyboard-based "AGV" control
+<!--## teleop_key.py-->
+<!--- [x] Keyboard-based "AGV" control-->
 
