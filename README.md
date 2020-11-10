@@ -1811,7 +1811,36 @@ if __name__ == '__main__':
 
 ### Manual Operation
 
+```
+[Teminal: One]
+$ roslaunch astra_camera astra.launch
+[Teminal: Two]
+$ rosrun rosserial_python serial_node.py /dev/ttyUSB0
+[Teminal: Three]
+$ rosrun common_agv_application object_detection_deep_learning.py
+[Teminal: Four]
+$ rosrun common_agv_application teleop_key.py
+```
+
 ### Autonomous Operation
 
+```
+[Teminal: One]
+$ roslaunch astra_camera astra.launch
+[Teminal: Two]
+$ rosrun rosserial_python serial_node.py /dev/ttyUSB0
+[Teminal: Three]
+$ rosrun common_agv_application person_detection_deep_learning.py
+[Teminal: Four]
+$ rosrun common_agv_application person_detection_tracking.py
+[Teminal: Five]
+$ rosrun common_agv_application person_detection_navigation.py
+```
+
 ## Reference:
-1. https://www.pyimagesearch.com/2017/09/11/object-detection-with-deep-learning-and-opencv/
+1. Object detection with deep learning and OpenCV:
+	1. https://www.pyimagesearch.com/2017/09/11/object-detection-with-deep-learning-and-opencv/
+2. SSD: Single Shot MultiBox Detector: 
+	1. https://arxiv.org/abs/1512.02325
+3. MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications
+	1. https://arxiv.org/abs/1704.04861
