@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ################################################################################
-## {Description}: Object Detection Deep Learning
+## {Description}: Object Detection Deep Learning (MobileNetSSD)
 ################################################################################
 ## Author: Khairul Izwan Bin Kamsani
 ## Version: {1}.{0}.{0}
