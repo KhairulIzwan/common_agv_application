@@ -40,79 +40,79 @@ signed int speedLeft, speedRight;
 //Callback function for geometry_msgs::Twist
 void messageCb_cmd_vel(const geometry_msgs::Twist &msg)
 {
-//  Get the ros topic value
-  transVelocity = msg.linear.x;
-  rotVelocity = msg.angular.z;
-  
-//  Differential Drive Kinematics
-//::http://www.cs.columbia.edu/~allen/F15/NOTES/icckinematics.pdf
-//  Differential Drive Kinematics
-//::https://snapcraft.io/blog/your-first-robot-the-driver-4-5
+	//Get the ros topic value
+	transVelocity = msg.linear.x;
+	rotVelocity = msg.angular.z;
+	
+	//Differential Drive Kinematics
+	//http://www.cs.columbia.edu/~allen/F15/NOTES/icckinematics.pdf
+	//Differential Drive Kinematics
+	//https://snapcraft.io/blog/your-first-robot-the-driver-4-5
 
-//  Step 1: Calculate wheel speeds from Twist
-  leftVelocity = transVelocity - ((rotVelocity * wheelSep) / 2);
-  rightVelocity = transVelocity + ((rotVelocity * wheelSep) / 2);
-  
-//  Step 2: Convert wheel speeds into duty cycles
-  leftDutyCycle = (255 * leftVelocity) / 0.22;
-  rightDutyCycle = (255 * rightVelocity) / 0.22;
+	//Step 1: Calculate wheel speeds from Twist
+	leftVelocity = transVelocity - ((rotVelocity * wheelSep) / 2);
+	rightVelocity = transVelocity + ((rotVelocity * wheelSep) / 2);
+	  
+	//Step 2: Convert wheel speeds into duty cycles
+	leftDutyCycle = (255 * leftVelocity) / 0.22;
+	rightDutyCycle = (255 * rightVelocity) / 0.22;
 
-//  Ensure DutyCycle is between minimum and maximum
-  leftPWM = clipPWM(abs(leftDutyCycle), 0, 25);
-  rightPWM = clipPWM(abs(rightDutyCycle), 0, 25);
+	//Ensure DutyCycle is between minimum and maximum
+	leftPWM = clipPWM(abs(leftDutyCycle), 0, 25);
+	rightPWM = clipPWM(abs(rightDutyCycle), 0, 25);
 
-//  motor directection helper function
-  motorDirection();
+	//motor directection helper function
+	motorDirection();
 }
 
 //Helper function to ensure DutyCycle is between minimum
 //and maximum
 float clipPWM(float PWM, float minPWM, float maxPWM)
 {
-  if (PWM < minPWM)
-  {
-    return minPWM;
-  }
-  else if (PWM > maxPWM)
-  {
-    return maxPWM;
-  }
-  return PWM;
+	if (PWM < minPWM)
+	{
+		return minPWM;
+	}
+	else if (PWM > maxPWM)
+	{
+		return maxPWM;
+	}
+	return PWM;
 }
 
 //Motor Direction helper function
 void motorDirection()
 {
-//  Forward
-  if (leftDutyCycle > 0 and rightDutyCycle > 0)
-  {
-    speedLeft=-leftPWM;
-    speedRight=rightPWM;
-  }
-//  Backward
-  else if (leftDutyCycle < 0 and rightDutyCycle < 0)
-  {
-    speedLeft=leftPWM;
-    speedRight=-rightPWM;
-  }
-//  Left
-  else if (leftDutyCycle < 0 and rightDutyCycle > 0)
-  {
-    speedLeft=leftPWM;
-    speedRight=rightPWM;
-  }
-//  Right
-  else if (leftDutyCycle > 0 and rightDutyCycle < 0)
-  {
-    speedLeft=-leftPWM;
-    speedRight=-rightPWM;
-  }
-  else if (leftDutyCycle == 0 and rightDutyCycle == 0)
-  {
-    speedLeft=0;
-    speedRight=0;
-  }
-  smartDriveDuo30.control(speedLeft, speedRight);
+	//Forward
+	if (leftDutyCycle > 0 and rightDutyCycle > 0)
+	{
+		speedLeft=-leftPWM;
+		speedRight=rightPWM;
+	}
+	//Backward
+	else if (leftDutyCycle < 0 and rightDutyCycle < 0)
+	{
+		speedLeft=leftPWM;
+		speedRight=-rightPWM;
+	}
+	//Left
+	else if (leftDutyCycle < 0 and rightDutyCycle > 0)
+	{
+		speedLeft=leftPWM;
+		speedRight=rightPWM;
+	}
+	//Right
+	else if (leftDutyCycle > 0 and rightDutyCycle < 0)
+	{
+		speedLeft=-leftPWM;
+		speedRight=-rightPWM;
+	}
+	else if (leftDutyCycle == 0 and rightDutyCycle == 0)
+	{
+		speedLeft=0;
+		speedRight=0;
+	}
+	smartDriveDuo30.control(speedLeft, speedRight);
 }
 
 //Set up the ros node (publisher and subscriber)
@@ -123,13 +123,13 @@ ros::NodeHandle nh;
 //put your setup code here, to run once:
 void setup()
 {
-//Initiate ROS-node
-  nh.initNode();
-  nh.subscribe(sub_cmd_vel);
+	//Initiate ROS-node
+	nh.initNode();
+	nh.subscribe(sub_cmd_vel);
 }
 
 //put your main code here, to run repeatedly:
 void loop()
 {
-  nh.spinOnce();
+	nh.spinOnce();
 }
