@@ -244,165 +244,165 @@ void loop()
 <!--- [x] Download it first using Arduino IDE -->
 <!--**rosserial library required** : http://wiki.ros.org/rosserial_arduino/Tutorials/Arduino%20IDE%20Setup-->
 
-## camera_preview.py
-- [x] Previewing an image stream from camera
-```python
-#!/usr/bin/env python
+<!--## camera_preview.py-->
+<!--- [x] Previewing an image stream from camera-->
+<!--```python-->
+<!--#!/usr/bin/env python-->
 
-################################################################################
-## {Description}: Previewing an image stream from camera [RGB]
-################################################################################
-## Author: Khairul Izwan Bin Kamsani
-## Version: {1}.{0}.{0}
-## Email: {wansnap@gmail.com}
-################################################################################
+<!--################################################################################-->
+<!--## {Description}: Previewing an image stream from camera [RGB]-->
+<!--################################################################################-->
+<!--## Author: Khairul Izwan Bin Kamsani-->
+<!--## Version: {1}.{0}.{0}-->
+<!--## Email: {wansnap@gmail.com}-->
+<!--################################################################################-->
 
-# import the necessary Python packages
-from __future__ import print_function
-import sys
-import cv2
-import time
-import imutils
+<!--# import the necessary Python packages-->
+<!--from __future__ import print_function-->
+<!--import sys-->
+<!--import cv2-->
+<!--import time-->
+<!--import imutils-->
 
-# import the necessary ROS packages
-from std_msgs.msg import String
-from sensor_msgs.msg import Image
-from sensor_msgs.msg import CameraInfo
+<!--# import the necessary ROS packages-->
+<!--from std_msgs.msg import String-->
+<!--from sensor_msgs.msg import Image-->
+<!--from sensor_msgs.msg import CameraInfo-->
 
-from cv_bridge import CvBridge
-from cv_bridge import CvBridgeError
+<!--from cv_bridge import CvBridge-->
+<!--from cv_bridge import CvBridgeError-->
 
-import rospy
+<!--import rospy-->
 
-class CameraPreview:
-	def __init__(self):
+<!--class CameraPreview:-->
+<!--	def __init__(self):-->
 
-		self.bridge = CvBridge()
-		self.image_received = False
+<!--		self.bridge = CvBridge()-->
+<!--		self.image_received = False-->
 
-		rospy.logwarn("CameraPreview [RGB] Node [ONLINE]...")
+<!--		rospy.logwarn("CameraPreview [RGB] Node [ONLINE]...")-->
 
-		# rospy shutdown
-		rospy.on_shutdown(self.cbShutdown)
+<!--		# rospy shutdown-->
+<!--		rospy.on_shutdown(self.cbShutdown)-->
 
-		# Subscribe to Image msg
-		self.image_topic = "/camera/rgb/image_raw"
-		self.image_sub = rospy.Subscriber(
-						self.image_topic, 
-						Image, self.cbImage
-						)
+<!--		# Subscribe to Image msg-->
+<!--		self.image_topic = "/camera/rgb/image_raw"-->
+<!--		self.image_sub = rospy.Subscriber(-->
+<!--						self.image_topic, -->
+<!--						Image, self.cbImage-->
+<!--						)-->
 
-		# Subscribe to CameraInfo msg
-		self.cameraInfo_topic = "/camera/rgb/camera_info"
-		self.cameraInfo_sub = rospy.Subscriber(
-						self.cameraInfo_topic, 
-						CameraInfo, 
-						self.cbCameraInfo
-						)
+<!--		# Subscribe to CameraInfo msg-->
+<!--		self.cameraInfo_topic = "/camera/rgb/camera_info"-->
+<!--		self.cameraInfo_sub = rospy.Subscriber(-->
+<!--						self.cameraInfo_topic, -->
+<!--						CameraInfo, -->
+<!--						self.cbCameraInfo-->
+<!--						)-->
 
-		# Allow up to one second to connection
-		rospy.sleep(1)
+<!--		# Allow up to one second to connection-->
+<!--		rospy.sleep(1)-->
 
-	# Convert image to OpenCV format
-	def cbImage(self, msg):
+<!--	# Convert image to OpenCV format-->
+<!--	def cbImage(self, msg):-->
 
-		try:
-			self.cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+<!--		try:-->
+<!--			self.cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")-->
 
-		except CvBridgeError as e:
-			print(e)
+<!--		except CvBridgeError as e:-->
+<!--			print(e)-->
 
-		if self.cv_image is not None:
-			self.image_received = True
-		else:
-			self.image_received = False
+<!--		if self.cv_image is not None:-->
+<!--			self.image_received = True-->
+<!--		else:-->
+<!--			self.image_received = False-->
 
-	# Get CameraInfo
-	def cbCameraInfo(self, msg):
+<!--	# Get CameraInfo-->
+<!--	def cbCameraInfo(self, msg):-->
 
-		self.imgWidth = msg.width
-		self.imgHeight = msg.height
+<!--		self.imgWidth = msg.width-->
+<!--		self.imgHeight = msg.height-->
 
-	# Image information callback
-	def cbInfo(self):
+<!--	# Image information callback-->
+<!--	def cbInfo(self):-->
 
-		fontFace = cv2.FONT_HERSHEY_DUPLEX
-		fontScale = 0.5
-		color = (255, 255, 255)
-		thickness = 1
-		lineType = cv2.LINE_AA
-		bottomLeftOrigin = False # if True (text upside down)
+<!--		fontFace = cv2.FONT_HERSHEY_DUPLEX-->
+<!--		fontScale = 0.5-->
+<!--		color = (255, 255, 255)-->
+<!--		thickness = 1-->
+<!--		lineType = cv2.LINE_AA-->
+<!--		bottomLeftOrigin = False # if True (text upside down)-->
 
-		self.timestr = time.strftime("%Y%m%d-%H:%M:%S")
+<!--		self.timestr = time.strftime("%Y%m%d-%H:%M:%S")-->
 
-		cv2.putText(
-			self.cv_image, "{}".format(self.timestr), 
-			(10, 20), 
-			fontFace, 
-			fontScale, 
-			color, 
-			thickness, 
-			lineType, 
-			bottomLeftOrigin
-			)
+<!--		cv2.putText(-->
+<!--			self.cv_image, "{}".format(self.timestr), -->
+<!--			(10, 20), -->
+<!--			fontFace, -->
+<!--			fontScale, -->
+<!--			color, -->
+<!--			thickness, -->
+<!--			lineType, -->
+<!--			bottomLeftOrigin-->
+<!--			)-->
 
-		cv2.putText(
-			self.cv_image, "Sample", (10, self.imgHeight-10), 
-			fontFace, 
-			fontScale, 
-			color, 
-			thickness, 
-			lineType, 
-			bottomLeftOrigin
-			)
+<!--		cv2.putText(-->
+<!--			self.cv_image, "Sample", (10, self.imgHeight-10), -->
+<!--			fontFace, -->
+<!--			fontScale, -->
+<!--			color, -->
+<!--			thickness, -->
+<!--			lineType, -->
+<!--			bottomLeftOrigin-->
+<!--			)-->
 
-		cv2.putText(
-			self.cv_image, "(%d, %d)" % (self.imgWidth, self.imgHeight), 
-			(self.imgWidth-100, self.imgHeight-10), 
-			fontFace, 
-			fontScale, 
-			color, 
-			thickness, 
-			lineType, 
-			bottomLeftOrigin
-			)
+<!--		cv2.putText(-->
+<!--			self.cv_image, "(%d, %d)" % (self.imgWidth, self.imgHeight), -->
+<!--			(self.imgWidth-100, self.imgHeight-10), -->
+<!--			fontFace, -->
+<!--			fontScale, -->
+<!--			color, -->
+<!--			thickness, -->
+<!--			lineType, -->
+<!--			bottomLeftOrigin-->
+<!--			)-->
 
-	# Show the output frame
-	def cbShowImage(self):
-		self.cv_image_clone = imutils.resize(
-						self.cv_image.copy(),
-						width=320
-						)
+<!--	# Show the output frame-->
+<!--	def cbShowImage(self):-->
+<!--		self.cv_image_clone = imutils.resize(-->
+<!--						self.cv_image.copy(),-->
+<!--						width=320-->
+<!--						)-->
 
-		cv2.imshow("CameraPreview [RGB]", self.cv_image_clone)
-		cv2.waitKey(1)
+<!--		cv2.imshow("CameraPreview [RGB]", self.cv_image_clone)-->
+<!--		cv2.waitKey(1)-->
 
-	# Preview image + info
-	def cbPreview(self):
-		if self.image_received:
-			self.cbInfo()
-			self.cbShowImage()
-		else:
-			rospy.logerr("No images recieved")
+<!--	# Preview image + info-->
+<!--	def cbPreview(self):-->
+<!--		if self.image_received:-->
+<!--			self.cbInfo()-->
+<!--			self.cbShowImage()-->
+<!--		else:-->
+<!--			rospy.logerr("No images recieved")-->
 
-	# rospy shutdown callback
-	def cbShutdown(self):
-		rospy.logerr("CameraPreview [RGB] Node [OFFLINE]...")
-		cv2.destroyAllWindows()
+<!--	# rospy shutdown callback-->
+<!--	def cbShutdown(self):-->
+<!--		rospy.logerr("CameraPreview [RGB] Node [OFFLINE]...")-->
+<!--		cv2.destroyAllWindows()-->
 
-if __name__ == '__main__':
+<!--if __name__ == '__main__':-->
 
-	# Initialize
-	rospy.init_node('camera_rgb_preview', anonymous=False)
-	camera = CameraPreview()
-	
-#	r = rospy.Rate(10)
+<!--	# Initialize-->
+<!--	rospy.init_node('camera_rgb_preview', anonymous=False)-->
+<!--	camera = CameraPreview()-->
+<!--	-->
+<!--#	r = rospy.Rate(10)-->
 
-	# Camera preview
-	while not rospy.is_shutdown():
-		camera.cbPreview()
-#		r.sleep()
-```
+<!--	# Camera preview-->
+<!--	while not rospy.is_shutdown():-->
+<!--		camera.cbPreview()-->
+<!--#		r.sleep()-->
+<!--```-->
 
 <!--## face_detection_haar.py-->
 <!--- [x] Detection of face(s) using haar cascade technique-->
@@ -628,6 +628,174 @@ if __name__ == '__main__':
 		obj.cbPreview()
 #		r.sleep()
 ```
+
+## teleop_key.py
+- [x] Keyboard-based "AGV" control
+
+```python
+#!/usr/bin/env python
+
+import rospy
+from geometry_msgs.msg import Twist
+import sys, select, os
+
+if os.name == 'nt':
+	import msvcrt
+else:
+	import tty, termios
+
+MAX_LIN_VEL = 0.22
+MAX_ANG_VEL = 2.84
+
+LIN_VEL_STEP_SIZE = 0.01
+ANG_VEL_STEP_SIZE = 0.1
+
+msg = """
+Control Your AGV!
+---------------------------
+Moving around:
+        w
+   a    s    d
+        x
+
+w/x : increase/decrease linear velocity (MAX_LIN_VEL : ~ 0.22)
+a/d : increase/decrease angular velocity (MAX_ANG_VEL : ~ 2.84)
+
+space key, s : force stop
+
+CTRL-C to quit
+"""
+
+e = """
+Communications Failed
+"""
+
+def getKey():
+	if os.name == 'nt':
+		return msvcrt.getch()
+
+	tty.setraw(sys.stdin.fileno())
+	rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
+	if rlist:
+		key = sys.stdin.read(1)
+	else:
+		key = ''
+
+	termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+	return key
+
+def vels(target_linear_vel, target_angular_vel):
+	return "currently:\tlinear vel %s\t angular vel %s " % (target_linear_vel,target_angular_vel)
+
+def makeSimpleProfile(output, input, slop):
+	if input > output:
+		output = min( input, output + slop )
+	elif input < output:
+		output = max( input, output - slop )
+	else:
+		output = input
+
+	return output
+
+def constrain(input, low, high):
+	if input < low:
+		input = low
+	elif input > high:
+		input = high
+	else:
+		input = input
+
+	return input
+
+def checkLinearLimitVelocity(vel):
+	vel = constrain(vel, -MAX_LIN_VEL, MAX_LIN_VEL)
+
+	return vel
+
+def checkAngularLimitVelocity(vel):
+	vel = constrain(vel, -MAX_ANG_VEL, MAX_ANG_VEL)
+
+	return vel
+
+if __name__=="__main__":
+	if os.name != 'nt':
+		settings = termios.tcgetattr(sys.stdin)
+
+	rospy.init_node('agv_teleop')
+	pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
+
+	status = 0
+	target_linear_vel   = 0.0
+	target_angular_vel  = 0.0
+	control_linear_vel  = 0.0
+	control_angular_vel = 0.0
+
+	try:
+		print(msg)
+		while(1):
+			key = getKey()
+			if key == 'w' :
+				target_linear_vel = checkLinearLimitVelocity(target_linear_vel + LIN_VEL_STEP_SIZE)
+				status = status + 1
+				print(vels(target_linear_vel,target_angular_vel))
+			elif key == 'x' :
+				target_linear_vel = checkLinearLimitVelocity(target_linear_vel - LIN_VEL_STEP_SIZE)
+				status = status + 1
+				print(vels(target_linear_vel,target_angular_vel))
+			elif key == 'a' :
+				target_angular_vel = checkAngularLimitVelocity(target_angular_vel + ANG_VEL_STEP_SIZE)
+				status = status + 1
+				print(vels(target_linear_vel,target_angular_vel))
+			elif key == 'd' :
+				target_angular_vel = checkAngularLimitVelocity(target_angular_vel - ANG_VEL_STEP_SIZE)
+				status = status + 1
+				print(vels(target_linear_vel,target_angular_vel))
+			elif key == ' ' or key == 's' :
+				target_linear_vel   = 0.0
+				control_linear_vel  = 0.0
+				target_angular_vel  = 0.0
+				control_angular_vel = 0.0
+				print(vels(target_linear_vel, target_angular_vel))
+			else:
+				if (key == '\x03'):
+					break
+
+			if status == 20 :
+				print(msg)
+				status = 0
+
+			twist = Twist()
+
+			control_linear_vel = makeSimpleProfile(control_linear_vel, target_linear_vel, (LIN_VEL_STEP_SIZE/2.0))
+			twist.linear.x = control_linear_vel
+			twist.linear.y = 0.0
+			twist.linear.z = 0.0
+
+			control_angular_vel = makeSimpleProfile(control_angular_vel, target_angular_vel, (ANG_VEL_STEP_SIZE/2.0))
+			twist.angular.x = 0.0
+			twist.angular.y = 0.0
+			twist.angular.z = control_angular_vel
+
+			pub.publish(twist)
+
+	except:
+		print(e)
+
+	finally:
+		twist = Twist()
+		twist.linear.x = 0.0
+		twist.linear.y = 0.0
+		twist.linear.z = 0.0
+		twist.angular.x = 0.0
+		twist.angular.y = 0.0
+		twist.angular.z = 0.0
+
+		pub.publish(twist)
+
+	if os.name != 'nt':
+		termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+```
+
 <!--## opencv_object_tracker.py-->
 <!--- [x] Tracking an object by selecting the ROI-->
 
@@ -1135,9 +1303,6 @@ if __name__ == '__main__':
 <!--## person_detection_hog.py-->
 <!--- [x] Detection of person(s) using Histogram of Gradient (HOG)-->
 
-<!--## teleop_key.py-->
-<!--- [x] Keyboard-based "AGV" control-->
-
 ## person_detection_tracking.py
 - [x] Getting the center coordinate and depth of person.
 
@@ -1643,3 +1808,10 @@ if __name__ == '__main__':
 ```
 
 ## Mode of Operation
+
+### Manual Operation
+
+### Autonomous Operation
+
+## Reference:
+1. https://www.pyimagesearch.com/2017/09/11/object-detection-with-deep-learning-and-opencv/
