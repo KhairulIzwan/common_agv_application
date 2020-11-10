@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ################################################################################
-## {Description}: 
+## {Description}: Drive the AGV autonomously based on person detected (coordinates and depth)
 ################################################################################
 ## Author: Khairul Izwan Bin Kamsani
 ## Version: {1}.{0}.{0}

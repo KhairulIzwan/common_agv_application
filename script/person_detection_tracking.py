@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 ################################################################################
-## {Description}: Person Tracking Deep Learning
+## {Description}: Person Tracking Deep Learning 
+## [Getting the center coordinate and depth of personal]
 ################################################################################
 ## Author: Khairul Izwan Bin Kamsani
 ## Version: {1}.{0}.{0}
