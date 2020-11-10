@@ -85,7 +85,7 @@ A project named as **"Automated Guided Vehicle"**
 ## System Architecture
 
 ![System Architecture](/etc/Service Robot.png)
-Format: ![Alt Text](url)
+Format: ![System Architecture](https://github.com/KhairulIzwan/common_agv_application/blob/main/etc/Service%20Robot.png)
 
 ## Cloning Required Repositories
 
