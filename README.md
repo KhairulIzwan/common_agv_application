@@ -82,7 +82,10 @@ A project named as **"Automated Guided Vehicle"**
 3. Arduino IDE:
 	1. https://www.arduino.cc/en/software
 	
-<!--## System Architecture-->
+## System Architecture
+
+![System Architecture](/etc/Service Robot.png)
+Format: ![Alt Text](url)
 
 ## Cloning Required Repositories
 
