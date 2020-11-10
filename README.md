@@ -103,7 +103,7 @@ $ cd ~/catkin_ws && rosdep install -y --from-paths src --ignore-src --rosdistro 
 	1. http://wiki.ros.org/rosserial_arduino/Tutorials/Arduino%20IDE%20Setup
 
 ## Scripts
-## smartDriveDuo30_node.ino
+### smartDriveDuo30_node.ino
 <!--```c++-->
 <!--/*-->
 <!-- * Title: Control MDDS30 in PWM mode with Arduino-->
@@ -411,7 +411,7 @@ $ cd ~/catkin_ws && rosdep install -y --from-paths src --ignore-src --rosdistro 
 <!--## facial_landmarks_dlib.py-->
 <!--- [x] Detection of face(s) using dlib libraries-->
 
-## object_detection_deep_learning.py
+### object_detection_deep_learning.py
 - [x] Detection of an object using deep learning (MobileNetSSD: https://mc.ai/object-detection-with-ssd-and-mobilenet/)
 
 <!--```python-->
@@ -630,7 +630,7 @@ $ cd ~/catkin_ws && rosdep install -y --from-paths src --ignore-src --rosdistro 
 <!--#		r.sleep()-->
 <!--```-->
 
-## teleop_key.py
+### teleop_key.py
 - [x] Keyboard-based "AGV" control
 
 <!--```python-->
@@ -800,7 +800,7 @@ $ cd ~/catkin_ws && rosdep install -y --from-paths src --ignore-src --rosdistro 
 <!--## opencv_object_tracker.py-->
 <!--- [x] Tracking an object by selecting the ROI-->
 
-## person_detection_deep_learning.py
+### person_detection_deep_learning.py
 - [x] Detection of person(s) using deep learning (MobileNetSSD: https://mc.ai/object-detection-with-ssd-and-mobilenet/)
 
 <!--```-->
@@ -1304,7 +1304,7 @@ $ cd ~/catkin_ws && rosdep install -y --from-paths src --ignore-src --rosdistro 
 <!--## person_detection_hog.py-->
 <!--- [x] Detection of person(s) using Histogram of Gradient (HOG)-->
 
-## person_detection_tracking.py
+### person_detection_tracking.py
 - [x] Getting the center coordinate and depth of person.
 
 <!--```python-->
@@ -1554,7 +1554,7 @@ $ cd ~/catkin_ws && rosdep install -y --from-paths src --ignore-src --rosdistro 
 <!--		r.sleep()-->
 <!--```-->
 
-## person_detection_navigation.py
+### person_detection_navigation.py
 - [x] Drive the AGV autonomously based on person detected (coordinates and depth)
 
 <!--```python-->
