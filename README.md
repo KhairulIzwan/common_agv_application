@@ -51,7 +51,7 @@ A project named as **"Automated Guided Vehicle"**
         └── trackableobject.py
 ```
 
-## Requirement (Setup)
+## System Requirement (Setup)
 ### Hardware
 1. PC/Laptop: Ubuntu Xenial Xerus (16.04 LTS) -- ROS Kinetic Kame
 2. Raspberry Pi 4 8GB: Ubuntu Bionic Beaver (18.04 LTS) -- ROS Melodic Morenia
