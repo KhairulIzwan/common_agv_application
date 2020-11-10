@@ -59,15 +59,29 @@ A project named as **"Automated Guided Vehicle"**
 <!--**rplidar_ros packages required** : https://github.com/Slamtec/rplidar_ros.git-->
 
 ### Software
-
-
+1. Ubuntu OS:
+	1. Download: 
+		1. https://releases.ubuntu.com/16.04/
+		2. https://releases.ubuntu.com/18.04/
+	2. Installation: 
+		1. https://ubuntu.com/tutorials/install-ubuntu-desktop-1604#1-overview
+		
+2. Robot Operating System (ROS)
+	1. Kinetic Kame:
+		1. http://wiki.ros.org/kinetic/Installation/Ubuntu
+	2. Melodic Morena:
+		1. http://wiki.ros.org/melodic/Installation/Ubuntu
+		
+3. Arduino IDE:
+	1. https://www.arduino.cc/en/software
+	
 ## System Architecture
 
 
 ## Scripts
 ## smartDriveDuo30_node.ino
-[x] Motor drive script
-[x] Download it first using Arduino IDE 
+- [x] Motor drive script
+- [x] Download it first using Arduino IDE 
 **rosserial library required** : http://wiki.ros.org/rosserial_arduino/Tutorials/Arduino%20IDE%20Setup
 
 ## camera_preview.py
