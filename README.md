@@ -1810,6 +1810,14 @@ $ cd ~/catkin_ws && rosdep install -y --from-paths src --ignore-src --rosdistro 
 
 ## Mode of Operation
 
+Suggestion: Install Terminator
+In Ubuntu, open terminal (Ctrl + Alt + t) and write the following commands:
+```
+$ sudo add-apt-repository ppa:gnome-terminator
+$ sudo apt-get update
+$ sudo apt-get install terminator
+```
+
 ### Manual Operation
 
 ```
