@@ -1845,3 +1845,5 @@ $ rosrun common_agv_application person_detection_navigation.py
 	1. https://arxiv.org/abs/1512.02325
 3. MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications
 	1. https://arxiv.org/abs/1704.04861
+4. Pan/tilt face tracking with a Raspberry Pi and OpenCV
+	1. https://www.pyimagesearch.com/2019/04/01/pan-tilt-face-tracking-with-a-raspberry-pi-and-opencv/
