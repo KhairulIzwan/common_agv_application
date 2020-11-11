@@ -92,12 +92,14 @@ A project named as **"Automated Guided Vehicle"**
 $ cd ~/catkin_ws/src
 $ git clone https://github.com/KhairulIzwan/common_agv_application.git
 $ cd ~/catkin_ws && rosdep install -y --from-paths src --ignore-src --rosdistro kinetic && catkin_make && rospack profile
+$ source ~/.bashrc
 ```
 2. Clone **ros_astra_camera** package:
 ```
 $ cd ~/catkin_ws/src
 $ git clone https://github.com/orbbec/ros_astra_camera.git
 $ cd ~/catkin_ws && rosdep install -y --from-paths src --ignore-src --rosdistro kinetic && catkin_make && rospack profile
+$ source ~/.bashrc
 ```
 3. Installation **rosserial_arduino** package:
 	1. http://wiki.ros.org/rosserial_arduino/Tutorials/Arduino%20IDE%20Setup
